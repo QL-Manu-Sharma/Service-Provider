@@ -80,7 +80,7 @@ To design and implement a clean, production-ready backend architecture that demo
 
 ## Folder Structure
 
-
+```
 src/
 ├── main/
 │ ├── java/com/example/
@@ -94,6 +94,8 @@ src/
 │ └── resources/
 │ ├── application.yml
 │ └── schema.sql
+
+```
 
 
 
