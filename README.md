@@ -112,7 +112,7 @@ src/
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/local-services-booking.git
+git clone https://github.com/QL-Manu-Sharma/Service-Provider.git
 cd local-services-booking
 
 # Configure DB credentials in application.yml
