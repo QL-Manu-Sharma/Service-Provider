@@ -5,6 +5,7 @@ import com.services.ServiceProvider.payload.response.ApiResponse;
 import com.services.ServiceProvider.payload.response.BookingResponse;
 import com.services.ServiceProvider.service.impl.AdminServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,9 +22,16 @@ public class AdminController {
     private final AdminServiceImpl adminService;
 
     @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> getAllUsers() {
-        List<UserResponseDto> users = adminService.getAllUsers();
-        return ResponseEntity.ok(ApiResponse.builder().data(users).status(true).build());
+    public ResponseEntity<ApiResponse> getAllUsers(@RequestParam(defaultValue = "0") int page) {
+        Page<UserResponseDto> users = adminService.getAllUsers(page, 5); // Fixed page size = 5
+
+        ApiResponse response = ApiResponse.builder()
+                .status(true)
+                .data(users)
+                .message("Users fetched successfully")
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping(value = "/block/users/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -39,8 +47,17 @@ public class AdminController {
     }
 
     @GetMapping(value = "/bookings", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> getAllBookings() {
-        List<BookingResponse> bookings = adminService.getAllBookings();
-        return ResponseEntity.ok(ApiResponse.builder().data(bookings).status(true).build());
+    public ResponseEntity<ApiResponse> getAllBookings(
+            @RequestParam(defaultValue = "0") int page
+    ) {
+        Page<BookingResponse> bookings = adminService.getAllBookings(page, 5);
+
+        ApiResponse response = ApiResponse.builder()
+                .status(true)
+                .data(bookings.getContent())
+                .message("Bookings fetched successfully")
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 }

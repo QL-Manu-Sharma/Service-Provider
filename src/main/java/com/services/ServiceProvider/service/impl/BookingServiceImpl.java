@@ -3,8 +3,7 @@ package com.services.ServiceProvider.service.impl;
 import com.services.ServiceProvider.constant.BookingStatus;
 import com.services.ServiceProvider.constant.Constants;
 import com.services.ServiceProvider.entity.*;
-import com.services.ServiceProvider.exception.UserBookingException;
-import com.services.ServiceProvider.exception.UserNotFoundException;
+import com.services.ServiceProvider.exception.*;
 import com.services.ServiceProvider.payload.response.BookingResponse;
 import com.services.ServiceProvider.repository.*;
 import com.services.ServiceProvider.service.BookingService;
@@ -56,8 +55,8 @@ public class BookingServiceImpl implements BookingService {
                 .anyMatch(role -> role.getRoleName().equals("USER"))) {
 
             booking.setUser(user);
-            booking.setProvider(providerRepo.findById(providerId).orElseThrow());
-            booking.setServiceCategory(serviceCategoryRepository.findById(serviceId).orElseThrow());
+            booking.setProvider(providerRepo.findById(providerId).orElseThrow(()-> new ProviderNotFoundException(453,Constants.RESPONSE.get(453))));
+            booking.setServiceCategory(serviceCategoryRepository.findById(serviceId).orElseThrow(()-> new ServiceNotFoundException(457,Constants.RESPONSE.get(457))));
             booking.setDate(date);
             booking.setStartTime(startTime);
             booking.setEndTime(endTime);
@@ -72,7 +71,7 @@ public class BookingServiceImpl implements BookingService {
         // Save selected add-ons
         if (addonIds != null && !addonIds.isEmpty()) {
             for (Long addonId : addonIds) {
-                ServiceAddon addon = serviceAddonRepository.findById(addonId).orElseThrow();
+                ServiceAddon addon = serviceAddonRepository.findById(addonId).orElseThrow(()->new AddonNotFoundException(456,Constants.RESPONSE.get(456)));
                 BookingAddon bookingAddon = new BookingAddon();
                 bookingAddon.setBooking(savedBooking);
                 bookingAddon.setAddon(addon);
@@ -88,7 +87,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public void updateStatus(Long bookingId, BookingStatus status) {
-        Booking booking = bookingRepo.findById(bookingId).orElseThrow();
+        Booking booking = bookingRepo.findById(bookingId).orElseThrow(()->new BookingNotExistsException(455,Constants.RESPONSE.get(455)));
         booking.setStatus(status);
         ProviderProfile profile = bookingRepo.findProviderByBookingId(bookingId);
         bookingRepo.save(booking);
